@@ -1,10 +1,9 @@
 # demiurge
 ### introduction
-I'm the *demiurge*, also called *fall* or *dahlia*.\
+I'm known professionally as the demiurge, but I'm fine with being called fall or dahlia.\
 I enjoy improving on my creative fields, such as writing, music, and painting.\
 I've a serious thirst for knowledge, mostly in fields related to philosophy and logic.\
-I'm a fan of genres like midwest emo, grunge, post-rock, and dark folk (not talking about black people here).\
-that's all
+I'm a fan of genres like midwest emo, grunge, post-rock, and some folk subgenres.
 
 ### contacts
 #### matrix
