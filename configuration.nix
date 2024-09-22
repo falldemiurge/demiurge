@@ -9,11 +9,12 @@
     <home-manager/nixos>
   ];
 
-  sound.enable = false;
 
   security.rtkit.enable = true;
   security.polkit.enable = true;
   services.gnome.gnome-keyring.enable = true;
+  services.locate.enable = true;
+  services.blueman.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -33,6 +34,9 @@
     ];
     config = {
       allowUnfree = true;
+      packageOverrides = pkgs: rec {
+
+      };
     };
   };
 
@@ -45,6 +49,7 @@
   environment.systemPackages = with pkgs; [
     # terminal stuff
     htop
+    cava
     yazi
     rtorrent
     browsh
@@ -52,7 +57,6 @@
     cmus
     khal
     wine
-    steamcmd
     wget
     timg
     feh
@@ -62,14 +66,27 @@
     thefuck
     neovim
     carapace
-    alejandra
     cbonsai
-    neofetch
+    ffmpeg
+    hyfetch
+    jq
+    poppler
+    fd
+    zoxide
+    fzf
+    grc
+    findutils
+    qmk
+    bluetuith
+    cmatrix
+    aalib
+    wol
 
     #wm utils
     waybar
     swaylock
     swayidle
+    wayland-pipewire-idle-inhibit
     sway-audio-idle-inhibit
     swaybg
     grim
@@ -79,9 +96,9 @@
     pavucontrol
     authenticator
     kitty
+    foot
 
     # gui packages
-    xfce.thunar
     firefox
     rofi-wayland
     krita
@@ -89,6 +106,10 @@
     vesktop
     calibre
     osu-lazer
+    scribus
+    nicotine-plus
+    parsec-bin
+    signal-desktop
 
     # necessary stuff
     dconf
@@ -102,6 +123,18 @@
     xdg-desktop-portal
     xdg-desktop-portal-wlr
     xdg-desktop-portal-gtk
+    libGL
+    libGLU
+    libinput
+    bluez
+    
+    # fish plugins
+    fish
+    fishPlugins.grc
+    fishPlugins.done
+    fishPlugins.fzf-fish
+    fishPlugins.sponge
+    fishPlugins.pure
   ];
 
   fonts.packages = with pkgs; [
@@ -115,14 +148,18 @@
   home-manager.users.demi = {pkgs, ...}: {
     qt = {
       enable = true;
-      platformTheme = "gtk";
+      platformTheme.name = "gtk";
       style.name = "adwaita-dark";
     };
 
     gtk = {
       enable = true;
+     #theme = {
+     #  name = "gruvbox-dark";
+     #  package = pkgs.gruvbox-dark-gtk;
+     #};
       theme = {
-        name = "Gruvbox-Dark-BL";
+        name = "Gruvbox-Dark";
         package = pkgs.gruvbox-gtk-theme;
       };
       iconTheme = {
@@ -135,12 +172,23 @@
         size = 24;
       };
     };
+
+    programs = {
+      firefox = {
+        enable = true;
+      };
+
+      neovim = {
+        viAlias = true;
+      };
+    };
+
     home.stateVersion = "23.11";
   };
 
   environment = {
     variables = {
-      EDITOR = "neovim";
+      EDITOR = "nvim";
     };
     sessionVariables = {
       NIXOS_OZONE_WL = "1";
@@ -156,7 +204,21 @@
     ];
   };
 
-  users.defaultUserShell = pkgs.nushell;
+  #users.defaultUserShell = pkgs.nushell;
+
+  programs.fish.enable = true;
+
+  programs.thunar.enable = true;
+
+  programs.bash = {
+    interactiveShellInit = ''
+      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+        then
+          shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+          exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
+          fi
+          '';
+  };
 
   programs.sway = {
     enable = true;
@@ -177,14 +239,17 @@
   };
 
   hardware.opentabletdriver.enable = true;
+  hardware.keyboard.qmk.enable = true;
+  hardware.bluetooth.enable = true; # enables support for Bluetooth
+  hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
 
-  hardware.opengl = {
-    ## radv: an open-source Vulkan driver from freedesktop
-    driSupport = true;
-    driSupport32Bit = true;
+  hardware.graphics = {
 
     ## amdvlk: an open-source Vulkan driver from AMD
-    extraPackages = [pkgs.amdvlk];
+    extraPackages = [
+      pkgs.amdvlk
+      pkgs.mesa.drivers
+    ];
     extraPackages32 = [pkgs.driversi686Linux.amdvlk];
   };
 
@@ -214,6 +279,7 @@
     };
   };
   programs.light.enable = true;
+  programs.dconf.enable = true;
 
   # This setups a SSH server. Very important if you're setting up a headless system.
   # Feel free to remove if you don't need it.
